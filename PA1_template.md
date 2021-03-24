@@ -12,44 +12,21 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-```
-## ── Attaching packages ─────────────────────────────── tidyverse 1.3.0 ──
-```
-
-```
-## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
-## ✓ tibble  3.0.5     ✓ dplyr   1.0.3
-## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
-## ✓ readr   1.4.0     ✓ forcats 0.5.0
-```
-
-```
-## ── Conflicts ────────────────────────────────── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()
-```
-
 ## Loading and preprocessing the data
 
 ```r
 activity <- read.csv("activity.csv")
-```
-
-```
-## Warning in file(file, "rt"): cannot open file 'activity.csv': No such
-## file or directory
-```
-
-```
-## Error in file(file, "rt"): cannot open the connection
-```
-
-```r
 head(activity)
 ```
 
 ```
-## Error in head(activity): object 'activity' not found
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
+## 6    NA 2012-10-01       25
 ```
 
 ```r
@@ -57,50 +34,39 @@ summary(activity)
 ```
 
 ```
-## Error in summary(activity): object 'activity' not found
+##      steps            date              interval     
+##  Min.   :  0.00   Length:17568       Min.   :   0.0  
+##  1st Qu.:  0.00   Class :character   1st Qu.: 588.8  
+##  Median :  0.00   Mode  :character   Median :1177.5  
+##  Mean   : 37.38                      Mean   :1177.5  
+##  3rd Qu.: 12.00                      3rd Qu.:1766.2  
+##  Max.   :806.00                      Max.   :2355.0  
+##  NA's   :2304
 ```
 ## What is mean total number of steps taken per day?
 
 ```r
 dailysteps <- tapply(activity$steps, activity$date, sum, na.rm = TRUE)
 ```
-
-```
-## Error in tapply(activity$steps, activity$date, sum, na.rm = TRUE): object 'activity' not found
-```
 Calculating mean number of steps
 
 ```r
 meanstepsdaily <- mean(dailysteps, na.rm = TRUE)
-```
-
-```
-## Error in mean(dailysteps, na.rm = TRUE): object 'dailysteps' not found
-```
-
-```r
 meanstepsdaily
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'meanstepsdaily' not found
+## [1] 9354.23
 ```
 Calculating median number of steps
 
 ```r
 medstepsdaily <- median(dailysteps, na.rm = TRUE)
-```
-
-```
-## Error in median(dailysteps, na.rm = TRUE): object 'dailysteps' not found
-```
-
-```r
 medstepsdaily
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'medstepsdaily' not found
+## [1] 10395
 ```
 
 ### Histogram for total number of steps taken each day ###
@@ -109,27 +75,14 @@ medstepsdaily
 hist(dailysteps, breaks = 10, xlab = "daily step count", main = "Histogram of daily steps", col = "darkorchid")
 ```
 
-```
-## Error in hist(dailysteps, breaks = 10, xlab = "daily step count", main = "Histogram of daily steps", : object 'dailysteps' not found
-```
+![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35-1.png)
 
 ## What is the average daily activity pattern?
 Calculate number of steps each day
 
 ```r
 activity$date <- as.character(activity$date)
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'activity' not found
-```
-
-```r
 meanstepsinterval <- tapply(activity$steps, activity$interval, mean, na.rm = TRUE)
-```
-
-```
-## Error in tapply(activity$steps, activity$interval, mean, na.rm = TRUE): object 'activity' not found
 ```
 
 ### Time-series plot of mean steps per 5-minute interval ###
@@ -138,25 +91,17 @@ meanstepsinterval <- tapply(activity$steps, activity$interval, mean, na.rm = TRU
 plot(row.names(meanstepsinterval), meanstepsinterval, type = "l", xlab = "5 minute intervals (12AM - 11:59PM)", ylab="mean number of steps", main="Mean steps per interval", col="darkorchid", cex=1, cex.axis=0.75, cex.lab=0.75, cex.main=0.95, font.lab=2, font=2, lwd = 2)
 ```
 
-```
-## Error in row.names(meanstepsinterval): object 'meanstepsinterval' not found
-```
+![plot of chunk unnamed-chunk-37](figure/unnamed-chunk-37-1.png)
 Which interval averages the most steps?
 
 ```r
 maxstepsinterval <- which.max(meanstepsinterval)
-```
-
-```
-## Error in which.max(meanstepsinterval): object 'meanstepsinterval' not found
-```
-
-```r
 print(maxstepsinterval)
 ```
 
 ```
-## Error in print(maxstepsinterval): object 'maxstepsinterval' not found
+## 835 
+## 104
 ```
 
 ```r
@@ -164,7 +109,7 @@ names(maxstepsinterval)
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'maxstepsinterval' not found
+## [1] "835"
 ```
 ## Imputing missing values
 
@@ -173,7 +118,7 @@ sum(is.na(activity))
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'activity' not found
+## [1] 2304
 ```
 *Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.*
 
@@ -181,26 +126,8 @@ The mean number of steps for each interval is used to impute the missing values 
 
 ```r
 imputed <- activity
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'activity' not found
-```
-
-```r
 meansteps <- mean(activity$steps, na.rm=TRUE)
-```
-
-```
-## Error in mean(activity$steps, na.rm = TRUE): object 'activity' not found
-```
-
-```r
 imputed$steps[is.na(imputed$steps)] <- meansteps
-```
-
-```
-## Error in eval(expr, envir, enclos): object 'meansteps' not found
 ```
 Are there any NAs remaining in the dataset?
 
@@ -209,24 +136,18 @@ sum(is.na(imputed))
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'imputed' not found
+## [1] 0
 ```
 New table with NAs imputed from interval means
 
 ```r
 dailystepsimputed <- tapply(imputed$steps, imputed$date, sum)
-```
-
-```
-## Error in tapply(imputed$steps, imputed$date, sum): object 'imputed' not found
-```
-
-```r
 head(dailystepsimputed)
 ```
 
 ```
-## Error in head(dailystepsimputed): object 'dailystepsimputed' not found
+## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
+##   10766.19     126.00   11352.00   12116.00   13294.00   15420.00
 ```
 
 ```r
@@ -234,7 +155,13 @@ summary(imputed)
 ```
 
 ```
-## Error in summary(imputed): object 'imputed' not found
+##      steps            date              interval     
+##  Min.   :  0.00   Length:17568       Min.   :   0.0  
+##  1st Qu.:  0.00   Class :character   1st Qu.: 588.8  
+##  Median :  0.00   Mode  :character   Median :1177.5  
+##  Mean   : 37.38                      Mean   :1177.5  
+##  3rd Qu.: 37.38                      3rd Qu.:1766.2  
+##  Max.   :806.00                      Max.   :2355.0
 ```
 ### Histogram for total number of steps taken each day with NA values imputed from interval means ###
 
@@ -242,42 +169,26 @@ summary(imputed)
 hist(dailystepsimputed, breaks = 10, xlab = "daily step count", main = "Histogram of daily steps (imputed means)", col = "orchid2")
 ```
 
-```
-## Error in hist(dailystepsimputed, breaks = 10, xlab = "daily step count", : object 'dailystepsimputed' not found
-```
+![plot of chunk unnamed-chunk-43](figure/unnamed-chunk-43-1.png)
 Calculate new mean number of steps
 
 ```r
 imputedmeanstepsdaily <- mean(dailystepsimputed)
-```
-
-```
-## Error in mean(dailystepsimputed): object 'dailystepsimputed' not found
-```
-
-```r
 imputedmeanstepsdaily
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'imputedmeanstepsdaily' not found
+## [1] 10766.19
 ```
 Calculate new median number of steps
 
 ```r
 imputedmedstepsdaily <- median(dailystepsimputed)
-```
-
-```
-## Error in median(dailystepsimputed): object 'dailystepsimputed' not found
-```
-
-```r
 imputedmedstepsdaily
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'imputedmedstepsdaily' not found
+## [1] 10766.19
 ```
 Change in steps with imputed NA values?
 
@@ -286,7 +197,8 @@ summary(dailysteps)
 ```
 
 ```
-## Error in summary(dailysteps): object 'dailysteps' not found
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       0    6778   10395    9354   12811   21194
 ```
 
 
@@ -295,91 +207,52 @@ summary(dailystepsimputed)
 ```
 
 ```
-## Error in summary(dailystepsimputed): object 'dailystepsimputed' not found
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      41    9819   10766   10766   12811   21194
 ```
 How did the imputed data differ from the original data?
 
 ```r
 meandifference <- mean(dailystepsimputed) - mean(dailysteps)
-```
-
-```
-## Error in mean(dailystepsimputed): object 'dailystepsimputed' not found
-```
-
-```r
 meandifference
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'meandifference' not found
+## [1] 1411.959
 ```
 
 
 ```r
 mediandifference <- median(dailystepsimputed) - median(dailysteps)
-```
-
-```
-## Error in median(dailystepsimputed): object 'dailystepsimputed' not found
-```
-
-```r
 mediandifference
 ```
 
 ```
-## Error in eval(expr, envir, enclos): object 'mediandifference' not found
+## [1] 371.1887
 ```
 ## Are there differences in activity patterns between weekdays and weekends?
 
 
 ```r
 imputed$daysweek <- weekdays(as.Date(imputed$date))
-```
-
-```
-## Error in as.Date(imputed$date): object 'imputed' not found
-```
-
-```r
 imputed$days[(imputed$daysweek == "Saturday" | imputed$daysweek == "Sunday")] <- "weekend"
-```
-
-```
-## Error in imputed$days[(imputed$daysweek == "Saturday" | imputed$daysweek == : object 'imputed' not found
-```
-
-```r
 imputed$days[!(imputed$daysweek == "Saturday" | imputed$daysweek == "Sunday")] <- "weekday"
-```
-
-```
-## Error in imputed$days[!(imputed$daysweek == "Saturday" | imputed$daysweek == : object 'imputed' not found
-```
-
-```r
 head(imputed)
 ```
 
 ```
-## Error in head(imputed): object 'imputed' not found
+##     steps       date interval daysweek    days
+## 1 37.3826 2012-10-01        0   Monday weekday
+## 2 37.3826 2012-10-01        5   Monday weekday
+## 3 37.3826 2012-10-01       10   Monday weekday
+## 4 37.3826 2012-10-01       15   Monday weekday
+## 5 37.3826 2012-10-01       20   Monday weekday
+## 6 37.3826 2012-10-01       25   Monday weekday
 ```
 
 ```r
 imputed$daysweek <- as.factor(imputed$daysweek)
-```
-
-```
-## Error in is.factor(x): object 'imputed' not found
-```
-
-```r
 imputed$days <- as.factor(imputed$days)
-```
-
-```
-## Error in is.factor(x): object 'imputed' not found
 ```
 
 ### Time-series panel plot for mean number of steps taken between weekdays & weekends ###
@@ -387,18 +260,9 @@ imputed$days <- as.factor(imputed$days)
 ```r
 library(lattice)
 imputedweekdaymeans <- aggregate(steps ~ interval + days, data = imputed, mean)
-```
-
-```
-## Error in eval(m$data, parent.frame()): object 'imputed' not found
-```
-
-```r
 xyplot(steps ~ interval | days, data = imputedweekdaymeans, type = "l", xlab = "interval", 
        ylab = "mean number of steps", main = "Mean number of step per 5 minute interval", col = "orchid", lwd = 2, layout = c(1,2))
 ```
 
-```
-## Error in eval(substitute(groups), data, environment(x)): object 'imputedweekdaymeans' not found
-```
+![plot of chunk unnamed-chunk-51](figure/unnamed-chunk-51-1.png)
 
