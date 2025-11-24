@@ -5,11 +5,11 @@
 initialize_board <- function() {
   board <- matrix("  ", nrow = 8, ncol = 8)
   
-  # White pieces (lowercase)
+  # White pieces (lowercase) - rows 1-2
   board[1, ] <- c("r", "n", "b", "q", "k", "b", "n", "r")
   board[2, ] <- rep("p", 8)
   
-  # Black pieces (uppercase)
+  # Black pieces (uppercase) - rows 7-8
   board[7, ] <- rep("P", 8)
   board[8, ] <- c("R", "N", "B", "Q", "K", "B", "N", "R")
   
@@ -100,22 +100,23 @@ validate_pawn_move <- function(board, from_row, from_col, to_row, to_col, is_whi
 validate_rook_move <- function(board, from_row, from_col, to_row, to_col, is_white_turn) {
   if (from_row != to_row && from_col != to_col) return(FALSE)
   
-  # Check path is clear
+  # Check path is clear for horizontal moves
   if (from_row == to_row) {
-    if (abs(to_col - from_col) <= 1) {
-      return(is_empty(board, to_row, to_col) || is_opponent(board, to_row, to_col, is_white_turn))
-    }
     step <- if (to_col > from_col) 1 else -1
-    for (col in seq(from_col + step, to_col - step, step)) {
-      if (!is_empty(board, from_row, col)) return(FALSE)
+    # Check all squares between from and to (exclusive)
+    if (abs(to_col - from_col) > 1) {
+      for (col in seq(from_col + step, to_col - step, step)) {
+        if (!is_empty(board, from_row, col)) return(FALSE)
+      }
     }
   } else {
-    if (abs(to_row - from_row) <= 1) {
-      return(is_empty(board, to_row, to_col) || is_opponent(board, to_row, to_col, is_white_turn))
-    }
+    # Check path is clear for vertical moves
     step <- if (to_row > from_row) 1 else -1
-    for (row in seq(from_row + step, to_row - step, step)) {
-      if (!is_empty(board, row, from_col)) return(FALSE)
+    # Check all squares between from and to (exclusive)
+    if (abs(to_row - from_row) > 1) {
+      for (row in seq(from_row + step, to_row - step, step)) {
+        if (!is_empty(board, row, from_col)) return(FALSE)
+      }
     }
   }
   
@@ -296,7 +297,7 @@ evaluate_board <- function(board) {
 }
 
 # Simple AI to choose a move
-ai_choose_move <- function(board, is_white_turn) {
+ai_choose_move <- function(board, is_white_turn, randomness = 0.3) {
   valid_moves <- get_all_valid_moves(board, is_white_turn)
   
   if (length(valid_moves) == 0) {
@@ -324,7 +325,7 @@ ai_choose_move <- function(board, is_white_turn) {
   }
   
   # Add some randomness to make it less predictable
-  if (runif(1) < 0.3 && length(valid_moves) > 0) {
+  if (runif(1) < randomness && length(valid_moves) > 0) {
     best_move <- valid_moves[[sample(1:length(valid_moves), 1)]]
   }
   
@@ -361,7 +362,7 @@ is_in_check <- function(board, is_white_king) {
 }
 
 # Main game function
-play_chess <- function(mode = "ai_vs_ai", max_moves = 50) {
+play_chess <- function(mode = "ai_vs_ai", max_moves = 50, move_delay = 0.5, ai_randomness = 0.3) {
   board <- initialize_board()
   is_white_turn <- TRUE
   move_count <- 0
@@ -389,7 +390,7 @@ play_chess <- function(mode = "ai_vs_ai", max_moves = 50) {
     
     # Choose move
     if (mode == "ai_vs_ai") {
-      move <- ai_choose_move(board, is_white_turn)
+      move <- ai_choose_move(board, is_white_turn, ai_randomness)
       if (is.null(move)) {
         cat(current_player, "has no valid moves. Game Over!\n")
         break
@@ -417,8 +418,10 @@ play_chess <- function(mode = "ai_vs_ai", max_moves = 50) {
     # Switch turns
     is_white_turn <- !is_white_turn
     
-    # Small delay for readability
-    Sys.sleep(0.5)
+    # Delay for readability (if not in non-interactive mode)
+    if (move_delay > 0) {
+      Sys.sleep(move_delay)
+    }
   }
   
   if (move_count >= max_moves) {
