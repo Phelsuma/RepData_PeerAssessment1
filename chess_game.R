@@ -430,6 +430,8 @@ play_chess <- function(mode = "ai_vs_ai", max_moves = 50) {
   return(board)
 }
 
-# Run a simulated game
-cat("\n*** Starting Chess Game Simulation ***\n\n")
-final_board <- play_chess(mode = "ai_vs_ai", max_moves = 30)
+# Run a simulated game only if this script is executed directly
+if (sys.nframe() == 0) {
+  cat("\n*** Starting Chess Game Simulation ***\n\n")
+  final_board <- play_chess(mode = "ai_vs_ai", max_moves = 30)
+}
