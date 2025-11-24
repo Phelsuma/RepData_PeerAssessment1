@@ -44,8 +44,16 @@ You can also customize the game by calling the `play_chess()` function directly:
 # Load the chess functions
 source("chess_game.R")
 
-# Run a longer game
-final_board <- play_chess(mode = "ai_vs_ai", max_moves = 50)
+# Run a longer game with custom settings
+final_board <- play_chess(
+  mode = "ai_vs_ai",        # Game mode (currently only ai_vs_ai supported)
+  max_moves = 50,           # Maximum number of moves before game ends
+  move_delay = 0.5,         # Delay in seconds between moves (0 for no delay)
+  ai_randomness = 0.3       # Probability of AI making a random move (0-1)
+)
+
+# Run a fast game with more strategic AI
+final_board <- play_chess(max_moves = 20, move_delay = 0, ai_randomness = 0.1)
 ```
 
 ## Features
@@ -82,8 +90,8 @@ The script provides several reusable functions:
 - `make_move(board, from_pos, to_pos)` - Executes a move
 - `get_all_valid_moves(board, is_white_turn)` - Returns all legal moves for current player
 - `evaluate_board(board)` - Calculates board position value
-- `ai_choose_move(board, is_white_turn)` - AI move selection
-- `play_chess(mode, max_moves)` - Main game loop
+- `ai_choose_move(board, is_white_turn, randomness)` - AI move selection with configurable randomness
+- `play_chess(mode, max_moves, move_delay, ai_randomness)` - Main game loop with configurable parameters
 
 ## Example Output
 
